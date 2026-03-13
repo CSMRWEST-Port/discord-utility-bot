@@ -2,11 +2,16 @@ import discord; from discord.ext import commands;
 from UserManagement import ModerationActions
 
 intents = discord.Intents.default()
+intents.members = True
 intents.message_content = True
 intents.guilds = True
 intents.presences = True
 
 client = commands.Bot(command_prefix='!', intents=intents);
+
+@client.command(name='welcome_channel', description='Sets the welcome channel for the server')
+async def welcome_channel(ctx):
+    await ctx.send(f'Welcome channel set to {ctx.channel.mention}!')
 
 @client.command(name='ban', description='Bans a user from the server')
 async def ban(ctx):
@@ -35,4 +40,14 @@ async def benice(ctx):
     else:
         await ctx.send(f'<@{ctx.message.author.id}> shut up non')
 
-client.run('YOUR_TOKEN_HERE')
+@client.event
+async def on_ready():
+    await client.change_presence(activity=discord.Game(name="Committing 50 different murders"))
+
+@client.event
+async def on_member_join(member):
+    channel = client.get_channel(1482108486228774973)
+    if channel:
+        await channel.send(f'Welcome to the server, <@{member.id}>!')
+
+client.run('YOUR_BOT_TOKEN_HERE')
