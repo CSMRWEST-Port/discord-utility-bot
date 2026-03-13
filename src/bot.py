@@ -1,5 +1,9 @@
+import os
+
 import discord; from discord.ext import commands;
-from UserManagement import ModerationActions
+from UserManagement import ModerationActions;
+from DataManager import Connection;
+from MessageManagement import MessageDeletion;
 
 intents = discord.Intents.default()
 intents.members = True
@@ -8,6 +12,10 @@ intents.guilds = True
 intents.presences = True
 
 client = commands.Bot(command_prefix='!', intents=intents);
+
+databaseConnection = Connection.DatabaseConnection();
+databaseConnection.connect();
+
 
 @client.command(name='welcome_channel', description='Sets the welcome channel for the server')
 async def welcome_channel(ctx):
@@ -40,9 +48,25 @@ async def benice(ctx):
     else:
         await ctx.send(f'<@{ctx.message.author.id}> shut up non')
 
+@client.command(name='purge', description='Deletes a specified number of messages from the channel')
+async def purge(ctx):
+    await MessageDeletion.purge(message=ctx.message)
+
+@client.command(name='commandlist', description='Sends a list of all available commands')
+async def commandlist(ctx):
+    if (ctx.message.author.guild_permissions.administrator):    
+        commandNames = [command.name for command in client.commands]
+        commandDescriptions = [command.description for command in client.commands]
+        commands = [f'- {name}: {description}\n' for name, description in zip(commandNames, commandDescriptions)]
+        await ctx.send(f'Available commands:\n{"".join(commands)}')
+    else:
+        await ctx.send(f'<@{ctx.message.author.id}> You do not have permission to use this command!')
+
 @client.event
 async def on_ready():
     await client.change_presence(activity=discord.Game(name="Committing 50 different murders"))
+
+
 
 @client.event
 async def on_member_join(member):
@@ -50,4 +74,5 @@ async def on_member_join(member):
     if channel:
         await channel.send(f'Welcome to the server, <@{member.id}>!')
 
-client.run('YOUR_BOT_TOKEN_HERE')
+
+client.run(os.getenv('BOT_TOKEN'))

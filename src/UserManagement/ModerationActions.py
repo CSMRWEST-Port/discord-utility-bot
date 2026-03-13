@@ -83,6 +83,9 @@ async def onUnmute(message):
     if (message.mentions == []):
         await message.channel.send(f'<@{message.author.id}>, you need to mention a user to unmute.')
         return
+    if (message.mentions[0].timed_out_until is None):
+        await message.channel.send(f'<@{message.author.id}>, that user is not currently muted.')
+        return
     guild = message.guild
     if message.author.guild_permissions.mute_members:
         member = await guild.fetch_member(message.mentions[0].id)
