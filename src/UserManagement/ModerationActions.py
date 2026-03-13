@@ -2,7 +2,7 @@ import discord
 import re
 import datetime
 
-async def onBan(self, message):
+async def onBan(message):
     if (message.mentions == []):
         await message.channel.send(f'<@{message.author.id}>, you need to mention a user to ban.')
         return
@@ -14,7 +14,7 @@ async def onBan(self, message):
     else:
         await message.channel.send(f'<@{message.author.id}>, you do not have permission to ban members.')
 
-async def onUnban(self, message):
+async def onUnban(message):
     if (message.content.split(" ")[1] == ""):
         await message.channel.send(f'<@{message.author.id}>, you need to mention a user to unban.')
         return
@@ -23,7 +23,7 @@ async def onUnban(self, message):
     if (message.author.guild_permissions.ban_members):
         await guild.unban(discord.Object(id=int(content)))
 
-async def onKick(self, message):
+async def onKick(message):
     if (message.mentions == []):
         await message.channel.send(f'<@{message.author.id}>, you need to mention a user to kick.')
         return
@@ -35,12 +35,16 @@ async def onKick(self, message):
     else:
         await message.channel.send(f'<@{message.author.id}>, you do not have permission to kick members.')
 
-async def onMute(self, message):
+async def onMute(message):
     if (message.mentions == []):
         await message.channel.send(f'<@{message.author.id}>, you need to mention a user to mute.')
         return
     guild = message.guild
-    givenTime = message.content.split(" ")[2]
+    try:
+        givenTime = message.content.split(" ")[2]
+    except IndexError:
+        await message.channel.send(f'<@{message.author.id}>, you need to specify a duration to mute the user for.')
+        return
     try:
         givenTime = int(givenTime)
     except ValueError:
@@ -65,12 +69,15 @@ async def onMute(self, message):
 
     if message.author.guild_permissions.mute_members:
         member = await guild.fetch_member(message.mentions[0].id)
+        if member.guild_permissions.administrator:
+            await message.channel.send(f'<@{message.author.id}>, you cannot mute an administrator.')
+            return
         await message.channel.send(f'{message.mentions[0]} has been muted by {message.author} for reason {content}.')
         await member.timeout(datetime.timedelta(seconds=givenTime), reason=content)
     else:
         await message.channel.send(f'<@{message.author.id}>, you do not have permission to mute members.')
 
-async def onUnmute(self, message):
+async def onUnmute(message):
     if (message.mentions == []):
         await message.channel.send(f'<@{message.author.id}>, you need to mention a user to unmute.')
         return

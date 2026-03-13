@@ -1,3 +1,3 @@
-if __name__ == "__main__":
-    import bot
-    bot()
+import bot
+
+bot()
