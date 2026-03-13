@@ -1,3 +1,4 @@
 token.txt
-rsa-github-key
-rsa-github-key.pub
+.vscode/
+.idea/
+.DS_Store

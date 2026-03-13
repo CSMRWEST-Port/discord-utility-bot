@@ -52,7 +52,9 @@ async def onMute(message):
         match = re.match(pattern, givenTime.strip().lower())
         
         if not match:
+            await message.channel.send(f'<@{message.author.id}>, invalid duration format. Please use a number followed by s, m, h, or d (e.g., 10m for 10 minutes).')
             raise ValueError(f"Invalid duration format: {givenTime}")
+            return
         
         value = int(match.group(1))
         unit = match.group(2)
