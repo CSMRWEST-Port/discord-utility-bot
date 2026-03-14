@@ -77,6 +77,10 @@ async def commandlist(ctx):
 async def setwelcomechannel(ctx):
     await WelcomeUsers.setWelcomeChannel(ctx.message, databaseConnection)
 
+@client.command(name='setwelcomemessage', description='Sets a custom welcome message for the server')
+async def setwelcomemessage(ctx):
+    await WelcomeUsers.setCustomWelcomeMessage(ctx.message, databaseConnection)
+
 @client.event
 async def on_ready():
     await client.change_presence(activity=discord.Game(name="Committing 50 different murders"))
@@ -85,9 +89,14 @@ async def on_ready():
 
 @client.event
 async def on_member_join(member):
-    channel = client.get_channel(1482108486228774973)
+    try:
+        channel_id = int(PreferenceStore.get_welcome_channel(member.guild.id, databaseConnection.connection))
+    except (TypeError, ValueError):
+        return
+    channel = client.get_channel(channel_id)
     if channel:
-        welcome_message = PreferenceStore.get_custom_welcome_message(member.guild.id, databaseConnection.connection)
+        db_store_message = PreferenceStore.get_custom_welcome_message(member.guild.id, databaseConnection.connection)
+        welcome_message = db_store_message if db_store_message != "None" else "Welcome to the server"
         await channel.send(f'{welcome_message}, <@{member.id}>!')
 
 
