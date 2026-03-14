@@ -60,6 +60,7 @@ async def onMute(message):
         unit = match.group(2)
 
         multipliers = {
+            '': 1,
             's': 1,
             'm': 60,
             'h': 3600,
