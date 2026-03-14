@@ -1,11 +1,7 @@
 import os
 
 import discord; from discord.ext import commands;
-<<<<<<< HEAD
 from ServerManagement import RoleManager, WelcomeUsers
-=======
-from ServerManagement import WelcomeUsers
->>>>>>> d4e254bb9c6c8e0f8dc12ec265b5884424164f7a
 from UserManagement import ModerationActions;
 from DataManager import Connection;
 from MessageManagement import MessageDeletion;
