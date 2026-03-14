@@ -1,9 +1,11 @@
 import os
 
 import discord; from discord.ext import commands;
+from ServerManagement import WelcomeUsers
 from UserManagement import ModerationActions;
 from DataManager import Connection;
 from MessageManagement import MessageDeletion;
+from DataManager import PreferenceStore;
 
 intents = discord.Intents.default()
 intents.members = True
@@ -15,6 +17,7 @@ client = commands.Bot(command_prefix='!', intents=intents);
 
 databaseConnection = Connection.DatabaseConnection();
 databaseConnection.connect();
+
 
 
 @client.command(name='welcome_channel', description='Sets the welcome channel for the server')
@@ -62,6 +65,10 @@ async def commandlist(ctx):
     else:
         await ctx.send(f'<@{ctx.message.author.id}> You do not have permission to use this command!')
 
+@client.command(name='setwelcomechannel', description='Sets a custom welcome channel for the server')
+async def setwelcomechannel(ctx):
+    await WelcomeUsers.setWelcomeChannel(ctx.message, databaseConnection)
+
 @client.event
 async def on_ready():
     await client.change_presence(activity=discord.Game(name="Committing 50 different murders"))
@@ -72,7 +79,8 @@ async def on_ready():
 async def on_member_join(member):
     channel = client.get_channel(1482108486228774973)
     if channel:
-        await channel.send(f'Welcome to the server, <@{member.id}>!')
+        welcome_message = PreferenceStore.get_custom_welcome_message(member.guild.id, databaseConnection.connection)
+        await channel.send(f'{welcome_message}, <@{member.id}>!')
 
 
 client.run(os.getenv('BOT_TOKEN'))
