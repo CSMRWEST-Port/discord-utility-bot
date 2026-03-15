@@ -5,7 +5,7 @@ from ServerManagement import RoleManager, WelcomeUsers
 from UserManagement import ModerationActions;
 from DataManager import Connection;
 from MessageManagement import MessageDeletion;
-from DataManager.GuildPreferences import PreferenceStore, PreferenceRetrieve
+from DataManager import PreferenceStore;
 
 intents = discord.Intents.default()
 intents.members = True
@@ -18,6 +18,11 @@ client = commands.Bot(command_prefix='!', intents=intents);
 databaseConnection = Connection.DatabaseConnection();
 databaseConnection.connect();
 
+
+
+@client.command(name='welcome_channel', description='Sets the welcome channel for the server')
+async def welcome_channel(ctx):
+    await ctx.send(f'Welcome channel set to {ctx.channel.mention}!')
 
 @client.command(name='ban', description='Bans a user from the server')
 async def ban(ctx):
@@ -80,15 +85,17 @@ async def setwelcomemessage(ctx):
 async def on_ready():
     await client.change_presence(activity=discord.Game(name="Committing 50 different murders"))
 
+
+
 @client.event
 async def on_member_join(member):
     try:
-        channel_id = int(PreferenceRetrieve.get_welcome_channel(member.guild.id, databaseConnection.connection))
+        channel_id = int(PreferenceStore.get_welcome_channel(member.guild.id, databaseConnection.connection))
     except (TypeError, ValueError):
         return
     channel = client.get_channel(channel_id)
     if channel:
-        db_store_message = PreferenceRetrieve.get_custom_welcome_message(member.guild.id, databaseConnection.connection)
+        db_store_message = PreferenceStore.get_custom_welcome_message(member.guild.id, databaseConnection.connection)
         welcome_message = db_store_message if db_store_message != "None" else "Welcome to the server"
         await channel.send(f'{welcome_message}, <@{member.id}>!')
 
