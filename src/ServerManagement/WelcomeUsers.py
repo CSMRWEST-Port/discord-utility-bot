@@ -1,5 +1,5 @@
 from DataManager.GuildPreferences import PreferenceStore
-import PermissionsManager
+import ServerManagement.PermissionsManager as PermissionsManager
 
 async def setWelcomeChannel(message, databaseConnection):
     if PermissionsManager.guild_management_check(message):
