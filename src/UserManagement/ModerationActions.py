@@ -2,7 +2,7 @@ import discord
 import re
 import datetime
 
-async def onBan(message):
+async def onBan(message: discord.Message):
     if (message.mentions == []):
         await message.channel.send(f'<@{message.author.id}>, you need to mention a user to ban.')
         return
@@ -14,7 +14,7 @@ async def onBan(message):
     else:
         await message.channel.send(f'<@{message.author.id}>, you do not have permission to ban members.')
 
-async def onUnban(message):
+async def onUnban(message: discord.Message):
     if (message.content.split(" ")[1] == ""):
         await message.channel.send(f'<@{message.author.id}>, you need to mention a user to unban.')
         return
@@ -23,7 +23,7 @@ async def onUnban(message):
     if (message.author.guild_permissions.ban_members):
         await guild.unban(discord.Object(id=int(content)))
 
-async def onKick(message):
+async def onKick(message: discord.Message):
     if (message.mentions == []):
         await message.channel.send(f'<@{message.author.id}>, you need to mention a user to kick.')
         return
@@ -35,7 +35,7 @@ async def onKick(message):
     else:
         await message.channel.send(f'<@{message.author.id}>, you do not have permission to kick members.')
 
-async def onMute(message):
+async def onMute(message: discord.Message):
     if (message.mentions == []):
         await message.channel.send(f'<@{message.author.id}>, you need to mention a user to mute.')
         return
@@ -80,7 +80,7 @@ async def onMute(message):
     else:
         await message.channel.send(f'<@{message.author.id}>, you do not have permission to mute members.')
 
-async def onUnmute(message):
+async def onUnmute(message: discord.Message):
     if (message.mentions == []):
         await message.channel.send(f'<@{message.author.id}>, you need to mention a user to unmute.')
         return
