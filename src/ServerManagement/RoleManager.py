@@ -1,6 +1,6 @@
 import discord
 
-async def addRole(message):
+async def addRole(message: discord.Message):
     if (message.mentions == []):
         await message.channel.send(f'<@{message.author.id}>, you need to mention a user to add a role to.')
         return

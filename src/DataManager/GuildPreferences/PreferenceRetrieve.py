@@ -1,7 +1,9 @@
+import psycopg2
+
 from DataManager.GuildPreferences.PreferenceStore import check_guild_exists, make_guild_if_not_exists
 
 
-def get_guild_preferences(guild_id, connection):
+def get_guild_preferences(guild_id: int, connection: psycopg2.extensions.connection):
     if (check_guild_exists(guild_id, connection) == False):
         make_guild_if_not_exists(guild_id, connection)
     with connection.cursor() as cursor:
@@ -11,7 +13,7 @@ def get_guild_preferences(guild_id, connection):
     return preferences
 
 
-def get_welcome_channel(guild_id, connection):
+def get_welcome_channel(guild_id: int, connection: psycopg2.extensions.connection):
     if (check_guild_exists(guild_id, connection) == False):
         make_guild_if_not_exists(guild_id, connection)
         return 'None'
@@ -22,7 +24,7 @@ def get_welcome_channel(guild_id, connection):
             return result[0]
 
 
-def get_custom_welcome_message(guild_id, connection):
+def get_custom_welcome_message(guild_id: int, connection: psycopg2.extensions.connection):
     if (check_guild_exists(guild_id, connection) == False):
         make_guild_if_not_exists(guild_id, connection)
         return 'None'
@@ -32,7 +34,7 @@ def get_custom_welcome_message(guild_id, connection):
         return result[0]
 
 
-def get_goodbye_channel(guild_id, connection):
+def get_goodbye_channel(guild_id: int, connection: psycopg2.extensions.connection):
     if (check_guild_exists(guild_id, connection) == False):
         make_guild_if_not_exists(guild_id, connection)
         return 'None'
@@ -42,7 +44,7 @@ def get_goodbye_channel(guild_id, connection):
         return result[0]
 
 
-def get_custom_goodbye_message(guild_id, connection):
+def get_custom_goodbye_message(guild_id: int, connection: psycopg2.extensions.connection):
     if (check_guild_exists(guild_id, connection) == False):
         make_guild_if_not_exists(guild_id, connection)
         return 'None'

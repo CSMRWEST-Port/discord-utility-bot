@@ -7,33 +7,33 @@ from UserManagement import ModerationActions
 # noinspection PyMethodParameters
 class MemberAdministration(commands.Cog):
 
-    def __init__(self, client):
+    def __init__(self, client: commands.Bot):
         self.client = client
 
     @commands.command(name='ban', description='Bans a user from the server')
-    async def ban(self, ctx):
+    async def ban(self, ctx: commands.Context):
         await ModerationActions.onBan(message=ctx.message)
 
 
     @commands.command(name='unban', description='Unbans a user from the server')
-    async def unban(self, ctx):
+    async def unban(self, ctx: commands.Context):
         await ModerationActions.onUnban(message=ctx.message)
 
 
     @commands.command(name='kick', description='Kicks a user from the server')
-    async def kick(self, ctx):
+    async def kick(self, ctx: commands.Context):
         await ModerationActions.onKick(message=ctx.message)
 
 
     @commands.command(name='mute', description='Mutes a user in the server')
-    async def mute(self, ctx):
+    async def mute(self, ctx: commands.Context):
         await ModerationActions.onMute(message=ctx.message)
 
 
     @commands.command(name='unmute', description='Unmutes a user in the server')
-    async def unmute(self, ctx):
+    async def unmute(self, ctx: commands.Context):
         await ModerationActions.onUnmute(message=ctx.message)
 
 
-async def setup(client):
+async def setup(client: commands.Bot):
     await client.add_cog(MemberAdministration(client))

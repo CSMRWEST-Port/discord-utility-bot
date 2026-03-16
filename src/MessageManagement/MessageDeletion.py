@@ -1,6 +1,6 @@
 import discord, time;
 
-async def purge(message):
+async def purge(message: discord.Message):
     if (message.author.guild_permissions.administrator):
         try:
             amount = int(message.content.split(" ")[1])

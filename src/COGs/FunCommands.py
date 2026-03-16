@@ -4,7 +4,7 @@ from discord.ext import commands
 
 # noinspection PyMethodParameters,PyRedundantParentheses
 class FunCommands(commands.Cog):
-    def __init__(self, client):
+    def __init__(self, client: commands.Bot):
         self.client = client
 
     @commands.command(name='benice', description='Tells the user to be nice')
@@ -19,5 +19,5 @@ class FunCommands(commands.Cog):
             await ctx.send(f'<@{ctx.message.author.id}> shut up non')
 
 
-async def setup(client):
+async def setup(client: commands.Bot):
     await client.add_cog(FunCommands(client))
