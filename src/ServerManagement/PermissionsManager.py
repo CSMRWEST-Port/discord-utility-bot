@@ -5,6 +5,10 @@ def guild_management_check(message: discord.Message):
     author_perms = message.author.guild_permissions
     return author_perms.administrator or author_perms.manage_guild
 
+def role_management_check(message: discord.Message):
+    author_perms = message.author.guild_permissions
+    return author_perms.administrator or author_perms.manage_roles
+
 def message_deletion_check(message: discord.Message):
     author_perms = message.author.guild_permissions
     return author_perms.administrator or author_perms.manage_messages
