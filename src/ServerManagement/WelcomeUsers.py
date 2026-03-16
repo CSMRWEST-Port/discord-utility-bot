@@ -1,7 +1,7 @@
 import discord
 
 from DataManager.GuildPreferences import PreferenceStore
-import ServerManagement.PermissionsManager as PermissionsManager
+import ServerManagement.PermissionChecks as PermissionsManager
 from DataManager import Connection
 
 async def setWelcomeChannel(message: discord.Message, databaseConnection: Connection.DatabaseConnection):

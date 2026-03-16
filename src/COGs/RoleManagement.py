@@ -11,6 +11,10 @@ class RoleManagement(commands.Cog):
     async def addrole(self, ctx: commands.Context):
         await RoleManager.addRole(message=ctx.message)
 
+    @commands.command(name='removerole', description='Removes a specified role from a mentioned user')
+    async def removerole(self, ctx: commands.Context):
+        await RoleManager.removeRole(message=ctx.message)
+
 
 async def setup(client: commands.Bot):
     await client.add_cog(RoleManagement(client))

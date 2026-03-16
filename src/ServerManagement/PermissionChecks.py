@@ -1,19 +1,19 @@
 import discord
 
 
-def guild_management_check(message: discord.Message):
+def guild_management_check(message: discord.Message) -> bool:
     author_perms = message.author.guild_permissions
     return author_perms.administrator or author_perms.manage_guild
 
-def role_management_check(message: discord.Message):
+def role_management_check(message: discord.Message) -> bool:
     author_perms = message.author.guild_permissions
     return author_perms.administrator or author_perms.manage_roles
 
-def message_deletion_check(message: discord.Message):
+def message_deletion_check(message: discord.Message) -> bool:
     author_perms = message.author.guild_permissions
     return author_perms.administrator or author_perms.manage_messages
 
-def user_management_check(message: discord.Message, action: str):
+def user_management_check(message: discord.Message, action: str) -> bool:
     author_perms = message.author.guild_permissions
     match action:
         case 'mute':

@@ -20,9 +20,24 @@ class EventListeners(commands.Cog):
             return
         channel = self.client.get_channel(channel_id)
         if channel:
-            db_store_message = PreferenceRetrieve.get_custom_welcome_message(member.guild.id, self.databaseConnection.connection)
+            db_store_message = PreferenceRetrieve.get_custom_welcome_message(member.guild.id, self.client.database.connection)
             welcome_message = db_store_message if db_store_message != "None" else "Welcome to the server"
             await channel.send(f'{welcome_message}, <@{member.id}>!')
+
+    @commands.Cog.listener()
+    async def on_member_remove(self, member: discord.Member):
+        guild_id = member.guild.id
+        channel_id = PreferenceRetrieve.get_goodbye_channel(guild_id, self.client.database.connection)
+        if channel_id != "None":
+            channel_id = int(channel_id)
+        else:
+            return
+        channel = await self.client.fetch_channel(channel_id)
+        if channel:
+            goodbye_message = PreferenceRetrieve.get_custom_goodbye_message(member.guild.id, self.client.database.connection)
+            await channel.send(f'{goodbye_message}, <@{member.id}>!')
+        else:
+            return
 
 async def setup(client: commands.Bot):
     await client.add_cog(EventListeners(client))
