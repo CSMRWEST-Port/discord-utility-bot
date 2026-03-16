@@ -9,6 +9,7 @@ services:
       - POSTGRESQL_DATABASE=${DB_NAME}
     volumes:
       - postgres_data:/bitnami/postgresql
+    restart: always
 
   bot:
     build: .

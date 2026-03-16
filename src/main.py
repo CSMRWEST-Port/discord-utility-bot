@@ -1,25 +1,34 @@
+import os
+
 from DataManager import Connection;
 import bot
+import discord
+from discord.ext import commands;
+import asyncio;
+
+def createIntents():
+    intents = discord.Intents.default()
+
+    intents.members = True
+    intents.message_content = True
+    intents.guilds = True
+    intents.presences = True
+
+    return intents
+
+
+async def load_extensions():
+    for f in os.listdir('COGs'):
+        if f.endswith('.py'):
+            await client.load_extension(f'COGs.{f[:-3]}');
+
+
+async def main():
+    async with client:
+        await load_extensions()
+        await client.start(os.getenv('BOT_TOKEN'));
+
+client = commands.Bot(command_prefix = '!', intents = createIntents());
 
 if __name__ == '__main__':
-    databaseConnection = Connection.DatabaseConnection();
-    while databaseConnection.connection is None:
-        databaseConnection.connect();
-
-    with databaseConnection.connection.cursor() as cur:
-        cur.execute('''CREATE TABLE IF NOT EXISTS guild_preferences (
-                        guild_id INTEGER NOT NULL PRIMARY KEY,
-                        auto_role TEXT NOT NULL,
-                        welcome_channel TEXT NOT NULL,
-                        welcome_message TEXT NOT NULL,
-                        goodbye_channel TEXT NOT NULL,
-                        goodbye_message TEXT NOT NULL
-                    );
-        ''')
-        databaseConnection.connection.commit();
-
-    # Add further table creations above this line
-    databaseConnection.connection.close();
-
-    discordBot = bot.Bot()
-
+    asyncio.run(main());

@@ -8,20 +8,12 @@ class DatabaseConnection:
     def connect(self):
         db_url = os.getenv('DATABASE_URL')
 
-        conn = None
-        attempts = 0
-
-        while attempts < 5:
+        while self.connection is None:
             try:
                 self.connection = psycopg2.connect(db_url)
-                print("Database connection established.")
-                return
             except psycopg2.OperationalError as e:
-                attempts += 1
-                print(f"Database connection failed (attempt {attempts}/5): {e}")
-                time.sleep(5)
-        
-        raise Exception("Failed to connect to the database after 5 attempts.")
+                print(e)
+                break;
        
 
     def disconnect(self):

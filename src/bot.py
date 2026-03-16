@@ -8,84 +8,17 @@ from MessageManagement import MessageDeletion;
 from DataManager.GuildPreferences import PreferenceStore, PreferenceRetrieve
 
 
-def createIntents():
-    intents = discord.Intents.default()
-
-    intents.members = True
-    intents.message_content = True
-    intents.guilds = True
-    intents.presences = True
-
-    return intents
-
-
 class Bot:
 
-    def __init__(self):
-
-        self.intents = createIntents();
-        self.client = commands.Bot(command_prefix='!', intents=self.intents);
-        self.databaseConnection = Connection.DatabaseConnection().connect()
+    def __init__(self, client):
+        self.client = client
+        self.databaseConnection = Connection.DatabaseConnection()
+        self.databaseConnection.connect()
         self.createCommands(self.client)
+        self.run()
 
 
     def createCommands(self, client: commands.Bot):
-        @client.command(name='ban', description='Bans a user from the server')
-        async def ban(ctx):
-            await ModerationActions.onBan(message=ctx.message)
-
-        @client.command(name='unban', description='Unbans a user from the server')
-        async def unban(ctx):
-            await ModerationActions.onUnban(message=ctx.message)
-
-        @client.command(name='kick', description='Kicks a user from the server')
-        async def kick(ctx):
-            await ModerationActions.onKick(message=ctx.message)
-
-        @client.command(name='mute', description='Mutes a user in the server')
-        async def mute(ctx):
-            await ModerationActions.onMute(message=ctx.message)
-
-        @client.command(name='unmute', description='Unmutes a user in the server')
-        async def unmute(ctx):
-            await ModerationActions.onUnmute(message=ctx.message)
-
-        @client.command(name='benice', description='Tells the user to be nice')
-        async def benice(ctx):
-            if (ctx.message.mentions == []):
-                await ctx.send(f'<@{ctx.message.author.id}>, be nice to yourself ig')
-            elif (ctx.message.mentions[0].guild_permissions.administrator):
-                await ctx.send(f'<@{ctx.message.author.id}>, you cannot tell an administrator to be nice!')
-            elif (ctx.message.author.guild_permissions.administrator):
-                await ctx.send(f'<@{ctx.message.mentions[0].id}>, please be nice!')
-            else:
-                await ctx.send(f'<@{ctx.message.author.id}> shut up non')
-
-        @client.command(name='purge', description='Deletes a specified number of messages from the channel')
-        async def purge(ctx):
-            await MessageDeletion.purge(message=ctx.message)
-
-        @client.command(name='addrole', description='Adds a specified role to a mentioned user')
-        async def addrole(ctx):
-            await RoleManager.addRole(message=ctx.message)
-
-        @client.command(name='commandlist', description='Sends a list of all available commands')
-        async def commandlist(ctx):
-            if (ctx.message.author.guild_permissions.administrator):
-                commandNames = [command.name for command in client.commands]
-                commandDescriptions = [command.description for command in client.commands]
-                commands = [f'- {name}: {description}\n' for name, description in zip(commandNames, commandDescriptions)]
-                await ctx.send(f'Available commands:\n{"".join(commands)}')
-            else:
-                await ctx.send(f'<@{ctx.message.author.id}> You do not have permission to use this command!')
-
-        @client.command(name='setwelcomechannel', description='Sets a custom welcome channel for the server')
-        async def setwelcomechannel(ctx):
-            await WelcomeUsers.setWelcomeChannel(ctx.message, databaseConnection)
-
-        @client.command(name='setwelcomemessage', description='Sets a custom welcome message for the server')
-        async def setwelcomemessage(ctx):
-            await WelcomeUsers.setCustomWelcomeMessage(ctx.message, databaseConnection)
 
         @client.event
         async def on_ready():
@@ -94,12 +27,12 @@ class Bot:
         @client.event
         async def on_member_join(member):
             try:
-                channel_id = int(PreferenceRetrieve.get_welcome_channel(member.guild.id, databaseConnection.connection))
+                channel_id = int(PreferenceRetrieve.get_welcome_channel(member.guild.id, self.databaseConnection.connection))
             except (TypeError, ValueError):
                 return
             channel = client.get_channel(channel_id)
             if channel:
-                db_store_message = PreferenceRetrieve.get_custom_welcome_message(member.guild.id, databaseConnection.connection)
+                db_store_message = PreferenceRetrieve.get_custom_welcome_message(member.guild.id, self.databaseConnection.connection)
                 welcome_message = db_store_message if db_store_message != "None" else "Welcome to the server"
                 await channel.send(f'{welcome_message}, <@{member.id}>!')
 
