@@ -1,14 +1,14 @@
+import asyncio;
 import os
 
-import psycopg2
+import discord
+from discord.ext import commands;
 
 from DataManager import Connection;
 from DataManager import DatabaseInit;
-import discord
-from discord.ext import commands;
-import asyncio;
 
-def createIntents():
+
+def createIntents() -> discord.Intents:
     intents = discord.Intents.default()
 
     intents.members = True

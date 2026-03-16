@@ -1,7 +1,10 @@
 import discord, time;
 
+from ServerManagement import PermissionChecks
+
+
 async def purge(message: discord.Message):
-    if (message.author.guild_permissions.administrator):
+    if (PermissionChecks.message_deletion_check(message)):
         try:
             amount = int(message.content.split(" ")[1])
         except (IndexError, ValueError):

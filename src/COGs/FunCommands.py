@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 
+import FunnyCommands.MiniGames as MiniGames
+
 
 # noinspection PyMethodParameters,PyRedundantParentheses
 class FunCommands(commands.Cog):
@@ -17,6 +19,23 @@ class FunCommands(commands.Cog):
             await ctx.send(f'<@{ctx.message.mentions[0].id}>, please be nice!')
         else:
             await ctx.send(f'<@{ctx.message.author.id}> shut up non')
+
+
+    @commands.command(name='diceroll', description='Rolls a dice of the user\'s specification')
+    async def diceroll(self, ctx: commands.Context):
+        message = ctx.message
+        dicetype: str = "d4"
+        try:
+            dicetype = message.content.split(" ")[1]
+        except IndexError:
+            res = await MiniGames.diceroll("d4");
+        else:
+            res = await MiniGames.diceroll(dicetype)
+
+        await message.channel.send(f"{res} was rolled on a {dicetype}")
+
+
+
 
 
 async def setup(client: commands.Bot):

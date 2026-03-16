@@ -1,15 +1,16 @@
-import discord, PermissionsManager
+import discord
+from ServerManagement import PermissionChecks, RolePermissionDefaults
 from discord import Role
 
 
 async def addRole(message: discord.Message):
-    if not PermissionsManager.role_management_check(message):
+    if not PermissionChecks.role_management_check(message):
         await message.channel.send(f"<@{message.author.id}>, you do not have permission to manage roles.")
         return
     if (message.mentions == []):
         await message.channel.send(f'<@{message.author.id}>, you need to mention a user to add a role to.')
         return
-    role = getRole(message);
+    role = await getRole(message);
     if role is None:
         await message.channel.send(f'<@{message.author.id}>, the role given does not exist.')
         return
@@ -18,7 +19,7 @@ async def addRole(message: discord.Message):
 
 
 async def removeRole(message: discord.Message):
-    if not PermissionsManager.role_management_check(message):
+    if not PermissionChecks.role_management_check(message):
         await message.channel.send(f"<@{message.author.id}>, you do not have permission to manage roles.")
         return
 
@@ -26,14 +27,48 @@ async def removeRole(message: discord.Message):
         await message.channel.send(f"<@{message.author.id}>, you need to mention a user whose role you want to remove.")
         return
 
-    role = getRole(message);
+    role = await getRole(message);
 
-    if role is None or role is not Role:
+    if role is None:
         await message.channel.send(f"<@{message.author.id}>, the role given does not exist.")
         return
 
     await message.mentions[0].remove_roles(role)
     await message.channel.send(f'{role} has been removed from {message.mentions[0]}.')
+
+
+async def createRole(message: discord.Message):
+    if not PermissionChecks.role_management_check(message):
+        await message.channel.send(f"<@{message.author.id}>, you do not have permissions to perform this command.")
+
+    guild = message.guild
+    role_permissions = await RolePermissionDefaults.get_default_role_permissions(message)
+    if role_permissions is None:
+        return
+
+    role_name = message.content.split(" ")[1]
+    await guild.create_role(name=role_name,mentionable=True,hoist=True, permissions=role_permissions)
+    await message.channel.send(f'{role_name} has been created.')
+
+
+async def deleteRole(message: discord.Message):
+    if not PermissionChecks.role_management_check(message):
+        await message.channel.send(f"<@{message.author.id}>, you do not have permissions to perform this command.")
+
+    guild = message.guild
+    role_id = message.content.split(" ")[1][3:-1]
+    try:
+        role_id = int(role_id)
+    except (TypeError, ValueError):
+        role = discord.utils.get(guild.roles, name=role_id)
+        if role is None:
+            await message.channel.send(f"{message.author.mention}, the role given does not exist.")
+            return
+
+    await message.guild.get_role(role_id).delete()
+    await message.channel.send(f'{role_id} has been deleted.')
+
+
 
 
 async def getRole(message: discord.Message) -> Role | None:
