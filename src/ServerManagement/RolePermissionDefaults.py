@@ -1,13 +1,17 @@
 import discord
+import re
 
 async def get_default_role_permissions(message: discord.Message) -> discord.Permissions | None:
+    content = message.content
+    result = re.sub(r'"(.*?)"', '', content)
+    result = result.replace('  ', ' ').strip()
     try:
-        role_type = message.content.split(" ")[2]
+        role_type = result.split(' ')[1]
     except IndexError:
         await message.channel.send(f"{message.author.mention}, defaulting to no permissions on role.")
         return discord.Permissions.none()
 
-    match role_type:
+    match role_type.lower():
         case "administrator":
             if message.author.guild_permissions.administrator:
                 return discord.Permissions(administrator=True)
@@ -32,12 +36,28 @@ async def get_default_role_permissions(message: discord.Message) -> discord.Perm
                                        embed_links=True,
                                        use_external_emojis=True,
                                        use_reactions=True,
-                                       use_application_commands=True)
-            if message.author.guild_permissions in perms:
+                                       use_application_commands=True,
+                                        mention_everyone=True)
+            if message.author.guild_permissions.is_superset(perms):
                 return perms
             else:
                 await message.channel.send(f"{message.author.mention}, you cannot create a role with greater permissions than your own.")
                 return None
         case "general":
-            return discord.Permissions.general()
+            perms = discord.Permissions.none()
+            perms.update(
+                view_channel=True,
+                send_messages=True,
+                send_messages_in_threads=True,
+                embed_links=True,
+                use_reactions=True,
+                read_message_history=True,
+                connect=True,
+                speak=True
+            )
+            if message.author.guild_permissions.is_superset(perms) or message.author.guild_permissions.administrator:
+                return perms
+            else:
+                await message.channel.send(f"{message.author.mention}, you cannot create a role with greater permissions than your own.")
+                return None
     return discord.Permissions.none()

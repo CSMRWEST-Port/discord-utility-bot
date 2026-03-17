@@ -22,8 +22,14 @@ async def onUnban(message: discord.Message):
     content = message.content.split(" ")[1]
     if (message.author.guild_permissions.ban_members):
         await guild.unban(discord.Object(id=int(content)))
+        await message.channel.send(f"<@{content}> has been unbanned by {message.author}")
+    else:
+        await message.channel.send(f"<@{message.author.id}>, you do not have permission to unban members.")
 
 async def onKick(message: discord.Message):
+    if (message.content.split(" ")[1].startswith("<@") and message.content.split(" ")[1].endswith(">") and message.mentions == []):
+        await message.channel.send(f"{message.author.mention}, this user is not in the server.")
+        return
     if (message.mentions == []):
         await message.channel.send(f'<@{message.author.id}>, you need to mention a user to kick.')
         return
