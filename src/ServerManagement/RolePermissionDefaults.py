@@ -60,4 +60,6 @@ async def get_default_role_permissions(message: discord.Message) -> discord.Perm
             else:
                 await message.channel.send(f"{message.author.mention}, you cannot create a role with greater permissions than your own.")
                 return None
-    return discord.Permissions.none()
+        case _:
+            perms = discord.Permissions.none()
+            return perms
