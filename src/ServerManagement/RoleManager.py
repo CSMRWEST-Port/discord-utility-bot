@@ -42,6 +42,7 @@ async def removeRole(message: discord.Message):
 async def createRole(message: discord.Message):
     if not PermissionChecks.role_management_check(message):
         await message.channel.send(f"<@{message.author.id}>, you do not have permissions to perform this command.")
+        return
 
     guild = message.guild
     role_permissions = await RolePermissionDefaults.get_default_role_permissions(message)
@@ -63,6 +64,7 @@ async def deleteRole(message: discord.Message):
     role: discord.Role
     if not PermissionChecks.role_management_check(message):
         await message.channel.send(f"<@{message.author.id}>, you do not have permissions to perform this command.")
+        return
 
     guild = message.guild
     role_id = message.content.split(" ")[1][3:-1]
