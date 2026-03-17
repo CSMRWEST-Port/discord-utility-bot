@@ -1,4 +1,5 @@
 import discord
+from discord import BanEntry
 from discord.ext import commands
 
 from UserManagement import ModerationActions
@@ -16,8 +17,12 @@ class MemberAdministration(commands.Cog):
 
 
     @commands.command(name='unban', description='Unbans a user from the server')
-    async def unban(self, ctx: commands.Context):
-        await ModerationActions.onUnban(message=ctx.message)
+    async def unban(self, ctx: commands.Context):#
+        user = await self.client.fetch_user(int(ctx.message.content.split(" ")[1]))
+        if (ctx.message.guild.fetch_ban(user=user) is BanEntry):
+            await ModerationActions.onUnban(message=ctx.message)
+        else:
+            await ctx.message.channel.send(f"<@{user.id}> is not a banned user")
 
 
     @commands.command(name='kick', description='Kicks a user from the server')
